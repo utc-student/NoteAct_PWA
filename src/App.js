@@ -1,25 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import LoginScreen from "./screens/LoginScreen";
+import HomeScreen from "./screens/HomeScreen";
+import PrivateRoute from "./components/PrivateRoute"; // Ajusta la ruta según tu estructura
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        {/* Ruta raíz: muestra el LoginScreen */}
+        <Route path="/" element={<LoginScreen />} />
+
+        {/* Ruta protegida para la página principal */}
+        <Route
+          path="/home"
+          element={
+            <PrivateRoute>
+              <HomeScreen />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Redirige cualquier ruta no definida a la raíz */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
