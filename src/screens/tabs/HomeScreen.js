@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { doc, getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { FirebaseError } from "firebase/app";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+// import { FirebaseError } from "firebase/app";
 
 export default function HomeScreen() {
     const [title, setTitle] = useState("");
@@ -45,8 +47,10 @@ export default function HomeScreen() {
                 await updateDoc(doc(getFirestore(), 'tasks', currentTaskId), newTask);
                 setIsEditing(false);
                 setCurrentTaskId(null);
+                toast.success('Tarea editada correctamente.');
             } else {
                 await addDoc(collection(getFirestore(), 'tasks'), newTask);
+                toast.success('Tarea agregada correctamente.');
             }
             setTitle("");
             setDescription("");
@@ -100,6 +104,7 @@ export default function HomeScreen() {
 
     return (
         <div style={styles.container}>
+            <ToastContainer />
             <button onClick={openAddTaskModal} style={styles.addButton}>Agregar Tarea</button>
             <ul style={styles.taskList}>
                 {tasks.map(task => (
