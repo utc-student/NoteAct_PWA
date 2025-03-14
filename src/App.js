@@ -5,6 +5,7 @@ import LoginScreen from "./screens/auth/LoginScreen"
 import RegisterScreen from "./screens/auth/RegisterScreen"
 import SplashScreen from "./screens/Splash/SplashScreen"
 // import { messaging } from './firebase';
+// import { generateToken } from "./firebase/firebaseConfig"
 
 export default function App() {
     const [loading, setLoading] = useState(true);
