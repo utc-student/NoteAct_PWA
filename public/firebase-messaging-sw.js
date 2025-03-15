@@ -1,4 +1,4 @@
-import { getMessaging, getToken } from "firebase/messaging";
+/* import { getMessaging, getToken } from "firebase/messaging";
 
 // Get registration token. Initially this makes a network call, once retrieved
 // subsequent calls to getToken will return from cache.
@@ -15,4 +15,4 @@ getToken(messaging, { vapidKey: 'BAkb2Grc0KaLU_hxPpftRsbWVBhvWvk07ZQd9j06N1XL9Rf
 }).catch((err) => {
   console.log('An error occurred while retrieving token. ', err);
   // ...
-});
+}); */
