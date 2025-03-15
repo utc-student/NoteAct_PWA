@@ -24,6 +24,12 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Divider from "@mui/material/Divider";
+import DialogContentText from "@mui/material/DialogContentText";
 // import { FirebaseError } from "firebase/app";
 
 export default function HomeScreen() {
@@ -103,16 +109,16 @@ export default function HomeScreen() {
   };
 
   const confirmDeleteTask = (id) => {
-    setTaskToDelete(id);
     setDeleteModalVisible(true);
+    setTaskToDelete(id);
   };
 
   const deleteTask = async () => {
     if (taskToDelete) {
       await deleteDoc(doc(getFirestore(), "tasks", taskToDelete));
-      setDeleteModalVisible(false);
       setTaskToDelete(null);
       setError(false);
+      setDeleteModalVisible(false);
     }
   };
 
@@ -151,14 +157,16 @@ export default function HomeScreen() {
               <Button
                 size="small"
                 onClick={() => editTask(task.id)}
-                sx={styles.editButton}
+                variant="contained"
+                color="primary"
               >
                 Editar
               </Button>
               <Button
                 size="small"
+                color="error"
+                variant="contained"
                 onClick={() => confirmDeleteTask(task.id)}
-                sx={styles.deleteButton}
               >
                 Eliminar
               </Button>
@@ -167,8 +175,13 @@ export default function HomeScreen() {
         ))}
       </ul>
       {modalVisible && (
-        <div style={styles.modalContainer}>
-          <div style={styles.modalView}>
+        <Dialog open={modalVisible} onClose={() => setModalVisible(false)}>
+          <DialogTitle>
+            {" "}
+            {isEditing ? "Editar Tarea" : "Agregar Tarea"}
+          </DialogTitle>
+          <Divider />
+          <DialogContent>
             <TextField
               fullWidth
               label="Título"
@@ -203,43 +216,56 @@ export default function HomeScreen() {
               />
             </LocalizationProvider>
             {error && <p style={styles.errorText}>{errorMessage}</p>}
-            <div style={styles.confirmButtons}>
-              <button
-                onClick={() => {
-                  setModalVisible(false);
-                  setError(false);
-                }}
-                style={styles.cancelButton}
-              >
-                Cerrar
-              </button>
-              <button onClick={addTask} style={styles.confirmButton}>
-                {isEditing ? "Guardar Cambios" : "Agregar Tarea"}
-              </button>
-            </div>
-          </div>
-        </div>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              color="inherit"
+              variant="contained"
+              onClick={() => {
+                setModalVisible(false);
+                setError(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button variant="contained" color="primary" onClick={addTask}>
+              {" "}
+              {isEditing ? "Guardar" : "Agregar"}
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
       {deleteModalVisible && (
-        <div style={styles.modalContainer}>
-          <div style={styles.modalView}>
-            <p>¿Estás seguro de que deseas eliminar esta tarea?</p>
-            <div style={styles.confirmButtons}>
-              <button
-                onClick={() => {
-                  setDeleteModalVisible(false);
-                  setError(false);
-                }}
-                style={styles.cancelButton}
+        <>
+          <Dialog
+            open={deleteModalVisible}
+            keepMounted
+            onClose={() => {
+              setDeleteModalVisible(false);
+              setError(false);
+            }}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle>¿Seguro que deseas eliminar esta tarea?</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                Una vez eliminada la tarea no se podrá recuperar.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                variant="contained"
+                color="inherit"
+                onClick={() => setDeleteModalVisible(false)}
               >
                 Cancelar
-              </button>
-              <button onClick={deleteTask} style={styles.confirmButton}>
+              </Button>
+              <Button variant="contained" color="error" onClick={deleteTask}>
                 Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </>
       )}
     </div>
   );
