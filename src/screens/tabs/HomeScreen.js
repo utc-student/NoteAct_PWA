@@ -19,7 +19,11 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
-
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 // import { FirebaseError } from "firebase/app";
 
 export default function HomeScreen() {
@@ -129,25 +133,37 @@ export default function HomeScreen() {
       </button>
       <ul style={styles.taskList}>
         {tasks.map((task) => (
-          <li key={task.id} style={styles.task}>
-            <h3 style={styles.taskTitle}>{task.title}</h3>
-            <p>{task.description}</p>
-            <p>Fecha de entrega: {task.dueDate}</p>
-            <div style={styles.taskButtons}>
-              <button
+          <Card key={task.id} sx={{ minWidth: 275, mb: 2, boxShadow: 8 }}>
+            <CardContent>
+              <Typography variant="h4" sx={{ color: "text.secondary" }}>
+                {task.title}
+              </Typography>
+              <Typography gutterBottom sx={{ color: "text.secondary" }}>
+                {task.description}
+              </Typography>
+              <Typography
+                sx={{ color: "text.secondary", mb: 1.5, fontSize: 14 }}
+              >
+                Fecha de entrega: {task.dueDate}
+              </Typography>
+            </CardContent>
+            <CardActions sx={{ justifyContent: "flex-end" }}>
+              <Button
+                size="small"
                 onClick={() => editTask(task.id)}
-                style={styles.editButton}
+                sx={styles.editButton}
               >
                 Editar
-              </button>
-              <button
+              </Button>
+              <Button
+                size="small"
                 onClick={() => confirmDeleteTask(task.id)}
-                style={styles.deleteButton}
+                sx={styles.deleteButton}
               >
                 Eliminar
-              </button>
-            </div>
-          </li>
+              </Button>
+            </CardActions>
+          </Card>
         ))}
       </ul>
       {modalVisible && (
@@ -232,6 +248,7 @@ export default function HomeScreen() {
 const styles = {
   container: {
     padding: "20px",
+    backgroundColor: "#EEEEEE",
   },
   addButton: {
     padding: "10px",
