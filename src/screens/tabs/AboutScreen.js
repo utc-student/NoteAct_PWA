@@ -1,41 +1,78 @@
-import React, { useEffect, useState } from "react";
-import { auth, db } from "../../firebase/firebaseConfig";
+import { auth } from "../../firebase/firebaseConfig";
 import { signOut } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { Button, Card, CardContent } from "@mui/material";
+import { useAuth } from "../../firebase/AuthContext";
 
 export default function AboutScreen() {
-    const [name, setName] = useState("");
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
-    useEffect(() => {
-        const fetchUserName = async () => {
-            const user = auth.currentUser;
-            if (user) {
-                const docRef = doc(db, "users", user.uid);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    setName(docSnap.data().name);
-                }
-            }
-        };
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
 
-        fetchUserName();
-    }, []);
-
-    const handleSignOut = async () => {
-        try {
-            await signOut(auth);
-            navigate("/login"); // Redirige a la pantalla de login después de cerrar sesión
-        } catch (error) {
-            console.error("Error al cerrar sesión:", error);
-        }
-    };
-
-    return (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-            <p>Bienvenido, {name}</p>
-            <button onClick={handleSignOut} style={{ padding: "10px", backgroundColor: "red", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer" }}>Cerrar sesión</button>
-        </div>
-    );
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <Card
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          width: "90%",
+          height: "50%",
+          boxShadow: 5,
+        }}
+      >
+        <CardContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "space-evenly",
+            justifyContent: "space-evenly",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <Typography
+            variant="h4"
+            sx={{ color: "text.secondary", textAlign: "center" }}
+          >
+            Hasta pronto!
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{ color: "text.secondary", textAlign: "center", mt: "-50px" }}
+          >
+            {user.email}
+          </Typography>
+          <Button
+            sx={{
+              width: { sm: "90%", lg: "40%" },
+              alignSelf: "center",
+              mt: "-20px",
+            }}
+            color="error"
+            variant="contained"
+            onClick={handleSignOut}
+          >
+            Cerrar sesión
+          </Button>
+        </CardContent>
+      </Card>
+    </Box>
+  );
 }
