@@ -226,7 +226,7 @@ export default function HomeScreen() {
                 setError(false);
               }}
             >
-              Cancel
+              Cancelar
             </Button>
             <Button variant="contained" color="primary" onClick={addTask}>
               {" "}
