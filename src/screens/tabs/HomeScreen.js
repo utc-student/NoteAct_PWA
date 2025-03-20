@@ -170,24 +170,25 @@ export default function HomeScreen() {
     setError(false);
   };
 
-  const enviarNotificacion = () => {
-    if (!("Notification" in window)) {
+  const enviarNotificacion = async () => {
+    if (!("Notification" in window) || !("serviceWorker" in navigator)) {
       toast.error("Las notificaciones no son compatibles con este navegador.");
       return;
     }
-
-    if (Notification.permission === "granted") {
-      mostrarNotificacion("Nota creada", "Se ha creado una nueva nota.");
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          mostrarNotificacion();
-        } else {
-          toast.error("Permiso de notificación denegado.");
-        }
-      });
+  
+    const permiso = await Notification.requestPermission();
+    if (permiso !== "granted") {
+      toast.error("Permiso de notificación denegado.");
+      return;
     }
+  
+    const registration = await navigator.serviceWorker.ready;
+    registration.showNotification("Nota creada", {
+      body: "Se ha creado una nueva nota.",
+      icon: "/logo192.png",
+    });
   };
+  
 
   
 

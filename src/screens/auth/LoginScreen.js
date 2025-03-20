@@ -5,6 +5,10 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
 
+import { registerServiceWorker } from "../../serviceWorkerRegister";
+
+registerServiceWorker();
+
 const LoginScreen = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
