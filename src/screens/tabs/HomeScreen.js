@@ -32,6 +32,22 @@ import Divider from "@mui/material/Divider";
 import DialogContentText from "@mui/material/DialogContentText";
 // import { FirebaseError } from "firebase/app";
 
+import { messaging, getToken, onMessage } from "../../firebase/firebaseConfig";
+
+const mostrarNotificacion = (title, body) => {
+  const opciones = { body, silent: true };
+  new Notification(title, opciones);
+
+  // Reproducir sonido personalizado
+  const audio = new Audio("/notificacion.mp3");
+  audio.play();
+
+  // Vibración para dispositivos móviles
+  if ("vibrate" in navigator) {
+    navigator.vibrate([200, 100, 200]);
+  }
+};
+
 export default function HomeScreen() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -66,6 +82,29 @@ export default function HomeScreen() {
       return () => unsubscribe();
     }
   }, [user]);
+
+  useEffect(() => {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        console.log("Permission granted");
+        getToken(messaging, { vapidKey: "BOc57LVyQhzryr7P46zuwZucPsgkPWJ23chCRJ1qh4tfbdKSAMf8rki1yezAm0m39XBFbmiw-idpOa1SWylzjpI" }).then((currentToken) => {
+          if (currentToken) {
+            console.log("Token:", currentToken);
+            // Envía este token a tu backend para enviar notificaciones
+          } else {
+            console.log("No se pudo obtener el token.");
+          }
+        });
+      } else {
+        console.log("Permiso de notificación denegado.");
+      }
+    });
+  
+    onMessage(messaging, (payload) => {
+      console.log("Mensaje recibido:", payload);
+      mostrarNotificacion(payload.notification.title, payload.notification.body);
+    });
+  }, []);
 
   const addTask = async () => {
     if (title && description && date && user) {
@@ -138,7 +177,7 @@ export default function HomeScreen() {
     }
 
     if (Notification.permission === "granted") {
-      mostrarNotificacion();
+      mostrarNotificacion("Nota creada", "Se ha creado una nueva nota.");
     } else if (Notification.permission !== "denied") {
       Notification.requestPermission().then((permission) => {
         if (permission === "granted") {
@@ -150,19 +189,7 @@ export default function HomeScreen() {
     }
   };
 
-  const mostrarNotificacion = () => {
-    const opciones = { body: "Tienes una nueva tarea pendiente.", silent: true };
-    new Notification("¡Recordatorio!", opciones);
   
-    // Reproducir sonido personalizado
-    const audio = new Audio("/notificacion.mp3"); // Asegúrate de que el archivo existe en `public/`
-    audio.play();
-  
-    // Vibración para dispositivos móviles
-    if ("vibrate" in navigator) {
-      navigator.vibrate([200, 100, 200]);
-    }
-  };
 
   return (
     <div style={styles.container}>
