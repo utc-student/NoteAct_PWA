@@ -131,12 +131,46 @@ export default function HomeScreen() {
     setError(false);
   };
 
+  const enviarNotificacion = () => {
+    if (!("Notification" in window)) {
+      toast.error("Las notificaciones no son compatibles con este navegador.");
+      return;
+    }
+
+    if (Notification.permission === "granted") {
+      mostrarNotificacion();
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          mostrarNotificacion();
+        } else {
+          toast.error("Permiso de notificación denegado.");
+        }
+      });
+    }
+  };
+
+  const mostrarNotificacion = () => {
+    const opciones = { body: "Tienes una nueva tarea pendiente.", silent: true };
+    new Notification("¡Recordatorio!", opciones);
+  
+    // Reproducir sonido personalizado
+    const audio = new Audio("/notificacion.mp3"); // Asegúrate de que el archivo existe en `public/`
+    audio.play();
+  
+    // Vibración para dispositivos móviles
+    if ("vibrate" in navigator) {
+      navigator.vibrate([200, 100, 200]);
+    }
+  };
+
   return (
     <div style={styles.container}>
       <ToastContainer />
       <button onClick={openAddTaskModal} style={styles.addButton}>
         Agregar Tarea
       </button>
+
       <ul style={styles.taskList}>
         {tasks.map((task) => (
           <Card key={task.id} sx={{ minWidth: 275, mb: 2, boxShadow: 8 }}>
@@ -228,7 +262,7 @@ export default function HomeScreen() {
             >
               Cancelar
             </Button>
-            <Button variant="contained" color="primary" onClick={addTask}>
+            <Button variant="contained" color="primary" onClick={() => { addTask(); enviarNotificacion(); }}>
               {" "}
               {isEditing ? "Guardar" : "Agregar"}
             </Button>
