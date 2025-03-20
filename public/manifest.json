@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "NoteAct",
+  "name": "NoteAct, una app de notas",
+  "description": "NoteAct es una app de notas que te permite guardar tus notas de manera segura y rápida.",
   "icons": [
     {
       "src": "favicon.ico",
@@ -19,7 +20,7 @@
     }
   ],
   "start_url": ".",
-  "display": "standalone",
+  "display": "fullscreen",
   "theme_color": "#000000",
   "background_color": "#ffffff"
 }
